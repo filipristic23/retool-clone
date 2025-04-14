@@ -18,11 +18,11 @@ const ImageIcon = () => (
 
 const Sidebar: React.FC = () => {
   return (
-    <div className="p-4 rounded-md bg-white" style={{ width: '300px', borderRight: '1px solid #e5e7eb' }}>
+    <div className="w-72 p-4 bg-white border-r border-gray-200">
       <h2 className="text-base font-semibold mb-4">Components</h2>
-      <div className="flex">
-        <SidebarItem text="Text" icon={<TextIcon />} />
-        <SidebarItem text="Image" icon={<ImageIcon />} />
+      <div className="flex flex-col">
+        <SidebarItem id="text" text="Text" icon={<TextIcon />} />
+        <SidebarItem id="image" text="Image" icon={<ImageIcon />} />
       </div>
     </div>
   );
