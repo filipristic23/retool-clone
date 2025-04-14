@@ -185,14 +185,14 @@ const ContentArea: React.FC<ContentAreaProps> = ({
         {droppedComponents.length > 0 ? (
           <div className="flex flex-col items-start w-full">
             {rows.map((row, rowIndex) => (
-              <div key={`row-${rowIndex}`} className="flex flex-row w-full mb-4">
+              <div key={`row-${rowIndex}`} className={`${isPreviewMode ? 'block md:flex' : 'flex'} flex-row w-full mb-4`}>
                 {row.map((component) => (
                   <div 
                     key={component.id}
                     data-component-id={component.id}
                     className={`${dragOverId === component.id ? 'border-t-2 border-blue-500' : ''} ${row.length > 1 ? 'pr-2 last:pr-0' : ''}
                                transition-all duration-200`}
-                    style={{ width: component.width || '100%' }}
+                    style={{ width: isPreviewMode ? '100%' : (component.width || '100%') }}
                   >
                     <ResizableComponent 
                       id={component.id} 
