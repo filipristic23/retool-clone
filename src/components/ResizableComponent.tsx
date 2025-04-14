@@ -7,6 +7,7 @@ interface ResizableComponentProps {
   isDragging?: boolean;
   initialWidth?: string;
   onWidthChange?: (width: string) => void;
+  isPreviewMode?: boolean;
 }
 
 // Available width presets
@@ -18,7 +19,8 @@ const ResizableComponent: React.FC<ResizableComponentProps> = ({
   onDragStart = () => {}, 
   isDragging = false,
   initialWidth = '100%',
-  onWidthChange = () => {} 
+  onWidthChange = () => {},
+  isPreviewMode = false
 }) => {
   const [width, setWidth] = useState<string>(initialWidth);
   const componentRef = useRef<HTMLDivElement>(null);
@@ -45,6 +47,17 @@ const ResizableComponent: React.FC<ResizableComponentProps> = ({
     // Call the parent's onDragStart function with this component's ID
     onDragStart(id);
   };
+
+  if (isPreviewMode) {
+    return (
+      <div 
+        ref={componentRef}
+        style={{ width }}
+      >
+        {children}
+      </div>
+    );
+  }
 
   return (
     <div 

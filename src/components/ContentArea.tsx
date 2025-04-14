@@ -200,18 +200,21 @@ const ContentArea: React.FC<ContentAreaProps> = ({
                       isDragging={draggedId === component.id}
                       initialWidth={component.width || '100%'}
                       onWidthChange={(width) => handleWidthChange(component.id, width)}
+                      isPreviewMode={isPreviewMode}
                     >
                       {component.type === 'text' ? (
                         <TextComponent 
                           id={component.id} 
                           content={component.content?.text}
                           onChange={(text) => handleTextChange(component.id, text)}
+                          isPreviewMode={isPreviewMode}
                         />
                       ) : component.type === 'image' ? (
                         <ImageComponent 
                           id={component.id}
                           content={component.content?.imageUrl}
                           onChange={(imageUrl) => handleImageChange(component.id, imageUrl)}
+                          isPreviewMode={isPreviewMode}
                         />
                       ) : null}
                     </ResizableComponent>

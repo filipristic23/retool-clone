@@ -15,8 +15,8 @@ const TextComponent: React.FC<TextComponentProps> = ({
 }) => {
   if (isPreviewMode) {
     return (
-      <div className="w-full min-h-[14rem] flex items-center justify-center">
-        <p className="p-2 overflow-auto">{content}</p>
+      <div className="w-full">
+        <p className="vl-all-text-medium">{content}</p>
       </div>
     );
   }

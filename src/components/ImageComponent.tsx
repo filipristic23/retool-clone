@@ -4,12 +4,14 @@ interface ImageComponentProps {
   id: string;
   content?: string | null;
   onChange?: (content: string | null) => void;
+  isPreviewMode?: boolean;
 }
 
 const ImageComponent: React.FC<ImageComponentProps> = ({ 
   id,
   content = null,
-  onChange = () => {}
+  onChange = () => {},
+  isPreviewMode = false
 }) => {
   const [isUploading, setIsUploading] = useState(false);
 
@@ -24,6 +26,18 @@ const ImageComponent: React.FC<ImageComponentProps> = ({
       setIsUploading(false);
     }
   };
+
+  if (isPreviewMode) {
+    return content ? (
+      <div className="w-full">
+        <img 
+          src={content}
+          alt="Uploaded"
+          className="w-full h-auto object-contain"
+        />
+      </div>
+    ) : null;
+  }
 
   return (
     <div className="w-full border border-gray-200 p-4 pr-12 rounded-md bg-white">
