@@ -33,7 +33,7 @@ const ImageComponent: React.FC<ImageComponentProps> = ({
         <img 
           src={content}
           alt="Uploaded"
-          className="w-full h-auto object-contain"
+          className="w-full h-auto object-contain max-w-[700px] mx-auto"
         />
       </div>
     ) : null;
