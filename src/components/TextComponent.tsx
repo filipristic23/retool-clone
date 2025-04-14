@@ -9,12 +9,12 @@ const TextComponent: React.FC<TextComponentProps> = ({ id }) => {
   const [isEditing, setIsEditing] = useState(true);
 
   return (
-    <div className="border border-gray-200 p-4 mb-4 rounded-md bg-white">
+    <div className="w-full border border-gray-200 p-4 pr-12 rounded-md bg-white">
       <div className="flex justify-between items-center mb-2">
         <div className="text-sm text-gray-500">Text Component</div>
         <button 
           onClick={() => setIsEditing(!isEditing)} 
-          className="text-blue-500 text-sm hover:text-blue-700"
+          className="text-blue-500 text-sm hover:text-blue-700 ml-8"
         >
           {isEditing ? 'Save' : 'Edit'}
         </button>

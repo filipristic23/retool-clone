@@ -27,6 +27,10 @@ const Layout: React.FC = () => {
     }
   };
 
+  const handleReorderComponents = (newOrder: DroppedComponent[]) => {
+    setDroppedComponents(newOrder);
+  };
+
   const togglePreviewMode = () => {
     setIsPreviewMode(!isPreviewMode);
   };
@@ -40,6 +44,7 @@ const Layout: React.FC = () => {
             droppedComponents={droppedComponents}
             isPreviewMode={isPreviewMode}
             togglePreviewMode={togglePreviewMode}
+            onReorderComponents={handleReorderComponents}
           />
         </div>
       </div>

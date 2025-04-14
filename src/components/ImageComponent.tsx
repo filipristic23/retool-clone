@@ -21,10 +21,10 @@ const ImageComponent: React.FC<ImageComponentProps> = ({ id }) => {
   };
 
   return (
-    <div className="border border-gray-200 p-4 mb-4 rounded-md bg-white">
+    <div className="w-full border border-gray-200 p-4 pr-12 rounded-md bg-white">
       <div className="flex justify-between items-center mb-2">
         <div className="text-sm text-gray-500">Image Component</div>
-        <label className="text-blue-500 text-sm hover:text-blue-700 cursor-pointer">
+        <label className="text-blue-500 text-sm hover:text-blue-700 cursor-pointer ml-8">
           {imageUrl ? 'Replace Image' : 'Upload Image'}
           <input 
             type="file" 
@@ -40,7 +40,7 @@ const ImageComponent: React.FC<ImageComponentProps> = ({ id }) => {
           <img 
             src={imageUrl} 
             alt="Uploaded"
-            className="max-w-full max-h-64 object-contain"
+            className="w-full h-auto object-contain max-h-64"
           />
         </div>
       ) : (
