@@ -1,10 +1,12 @@
-import React, { useState, useRef, ReactNode } from 'react';
+import React, { useState, useRef, ReactNode, useEffect } from 'react';
 
 interface ResizableComponentProps {
   id: string;
   children: ReactNode;
   onDragStart?: (id: string) => void;
   isDragging?: boolean;
+  initialWidth?: string;
+  onWidthChange?: (width: string) => void;
 }
 
 // Available width presets
@@ -14,14 +16,25 @@ const ResizableComponent: React.FC<ResizableComponentProps> = ({
   id, 
   children, 
   onDragStart = () => {}, 
-  isDragging = false 
+  isDragging = false,
+  initialWidth = '100%',
+  onWidthChange = () => {} 
 }) => {
-  const [width, setWidth] = useState<string>('100%');
+  const [width, setWidth] = useState<string>(initialWidth);
   const componentRef = useRef<HTMLDivElement>(null);
+
+  // Update width if initialWidth prop changes
+  useEffect(() => {
+    if (initialWidth !== width) {
+      setWidth(initialWidth);
+    }
+  }, [initialWidth, width]);
 
   // Toggle between full and half width
   const handleToggleWidth = () => {
-    setWidth(width === '100%' ? '50%' : '100%');
+    const newWidth = width === '100%' ? '50%' : '100%';
+    setWidth(newWidth);
+    onWidthChange(newWidth);
   };
 
   // Handle drag to reorder
@@ -36,10 +49,10 @@ const ResizableComponent: React.FC<ResizableComponentProps> = ({
   return (
     <div 
       ref={componentRef}
-      className={`relative mb-4 ${isDragging ? 'opacity-50' : ''}`}
+      className={`relative ${isDragging ? 'opacity-50' : ''}`}
       style={{ 
-        width: width,
-        transition: 'width 0.2s, opacity 0.2s',
+        width: '100%', // This component always takes full width of its parent
+        transition: 'opacity 0.2s',
       }}
     >
       {/* Width Controls */}
@@ -48,6 +61,7 @@ const ResizableComponent: React.FC<ResizableComponentProps> = ({
           onClick={handleToggleWidth}
           className="bg-gray-200 p-1 rounded-md hover:bg-gray-300 transition-colors"
           title={width === '100%' ? 'Switch to half width' : 'Switch to full width'}
+          data-testid="width-toggle"
         >
           {width === '100%' ? (
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

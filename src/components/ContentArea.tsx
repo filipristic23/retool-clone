@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import TextComponent from './TextComponent';
 import ImageComponent from './ImageComponent';
@@ -8,6 +8,7 @@ interface DroppedComponent {
   id: string;
   type: string;
   text: string;
+  width?: string; // Add width property to track component width
 }
 
 interface ContentAreaProps {
@@ -15,13 +16,15 @@ interface ContentAreaProps {
   isPreviewMode?: boolean;
   togglePreviewMode?: () => void;
   onReorderComponents?: (newOrder: DroppedComponent[]) => void;
+  onComponentWidthChange?: (id: string, width: string) => void;
 }
 
 const ContentArea: React.FC<ContentAreaProps> = ({ 
   droppedComponents, 
   isPreviewMode = false,
   togglePreviewMode = () => {},
-  onReorderComponents = () => {}
+  onReorderComponents = () => {},
+  onComponentWidthChange = () => {}
 }) => {
   const { setNodeRef, isOver } = useDroppable({
     id: 'content-area',
@@ -29,6 +32,37 @@ const ContentArea: React.FC<ContentAreaProps> = ({
 
   const [draggedId, setDraggedId] = useState<string | null>(null);
   const [dragOverId, setDragOverId] = useState<string | null>(null);
+
+  // Function to organize components into rows
+  const organizeComponentsIntoRows = (components: DroppedComponent[]) => {
+    const rows: DroppedComponent[][] = [];
+    let i = 0;
+    
+    // Process all components in their original order
+    while (i < components.length) {
+      const component = components[i];
+      const componentWidth = component.width || '100%';
+      
+      // Check if current component and next component are both 50% width
+      if (componentWidth === '50%' && i + 1 < components.length) {
+        const nextComponent = components[i + 1];
+        const nextComponentWidth = nextComponent.width || '100%';
+        
+        // If next component is also 50%, place them in the same row
+        if (nextComponentWidth === '50%') {
+          rows.push([component, nextComponent]);
+          i += 2; // Skip both components
+          continue;
+        }
+      }
+      
+      // If not paired, create a row with just this component
+      rows.push([component]);
+      i += 1;
+    }
+    
+    return rows;
+  };
 
   const handleDragStart = (id: string) => {
     setDraggedId(id);
@@ -39,6 +73,11 @@ const ContentArea: React.FC<ContentAreaProps> = ({
     if (draggedId && draggedId !== id) {
       setDragOverId(id);
     }
+  };
+
+  // When component width changes, update the state in parent
+  const handleWidthChange = (id: string, width: string) => {
+    onComponentWidthChange(id, width);
   };
 
   const handleDrop = () => {
@@ -102,7 +141,7 @@ const ContentArea: React.FC<ContentAreaProps> = ({
   };
 
   // Set up document-level event listeners when drag starts
-  React.useEffect(() => {
+  useEffect(() => {
     if (draggedId) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
@@ -113,6 +152,9 @@ const ContentArea: React.FC<ContentAreaProps> = ({
       };
     }
   }, [draggedId, dragOverId]);
+
+  // Organize components into rows for rendering
+  const rows = organizeComponentsIntoRows(droppedComponents);
 
   return (
     <div className="flex-1 p-4 bg-gray-50">
@@ -130,24 +172,32 @@ const ContentArea: React.FC<ContentAreaProps> = ({
         className={`p-4 bg-white rounded-md min-h-[calc(100vh-8rem)] ${!isPreviewMode && isOver ? 'bg-gray-50' : ''}`}
       >
         {droppedComponents.length > 0 ? (
-          <div className="flex flex-col items-start">
-            {droppedComponents.map((component) => (
-              <div 
-                key={component.id}
-                data-component-id={component.id}
-                className={dragOverId === component.id ? 'border-t-2 border-blue-500 w-full' : 'w-full'}
-              >
-                <ResizableComponent 
-                  id={component.id} 
-                  onDragStart={!isPreviewMode ? handleDragStart : undefined}
-                  isDragging={draggedId === component.id}
-                >
-                  {component.type === 'text' ? (
-                    <TextComponent id={component.id} />
-                  ) : component.type === 'image' ? (
-                    <ImageComponent id={component.id} />
-                  ) : null}
-                </ResizableComponent>
+          <div className="flex flex-col items-start w-full">
+            {rows.map((row, rowIndex) => (
+              <div key={`row-${rowIndex}`} className="flex flex-row w-full mb-4">
+                {row.map((component) => (
+                  <div 
+                    key={component.id}
+                    data-component-id={component.id}
+                    className={`${dragOverId === component.id ? 'border-t-2 border-blue-500' : ''} ${row.length > 1 ? 'pr-2 last:pr-0' : ''}
+                               transition-all duration-200`}
+                    style={{ width: component.width || '100%' }}
+                  >
+                    <ResizableComponent 
+                      id={component.id} 
+                      onDragStart={!isPreviewMode ? handleDragStart : undefined}
+                      isDragging={draggedId === component.id}
+                      initialWidth={component.width || '100%'}
+                      onWidthChange={(width) => handleWidthChange(component.id, width)}
+                    >
+                      {component.type === 'text' ? (
+                        <TextComponent id={component.id} />
+                      ) : component.type === 'image' ? (
+                        <ImageComponent id={component.id} />
+                      ) : null}
+                    </ResizableComponent>
+                  </div>
+                ))}
               </div>
             ))}
           </div>

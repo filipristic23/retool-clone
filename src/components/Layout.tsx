@@ -7,6 +7,7 @@ interface DroppedComponent {
   id: string;
   type: string;
   text: string;
+  width?: string;
 }
 
 const Layout: React.FC = () => {
@@ -20,7 +21,8 @@ const Layout: React.FC = () => {
       const newComponent = {
         id: `${active.data.current?.type}-${Date.now()}`,
         type: active.data.current?.type,
-        text: active.data.current?.text
+        text: active.data.current?.text,
+        width: '100%' // Default width for new components
       };
       
       setDroppedComponents([...droppedComponents, newComponent]);
@@ -29,6 +31,18 @@ const Layout: React.FC = () => {
 
   const handleReorderComponents = (newOrder: DroppedComponent[]) => {
     setDroppedComponents(newOrder);
+  };
+
+  const handleComponentWidthChange = (id: string, width: string) => {
+    console.log(`Changing width of component ${id} to ${width}`);
+    
+    const updatedComponents = droppedComponents.map(component => 
+      component.id === id 
+        ? { ...component, width } 
+        : component
+    );
+    
+    setDroppedComponents(updatedComponents);
   };
 
   const togglePreviewMode = () => {
@@ -45,6 +59,7 @@ const Layout: React.FC = () => {
             isPreviewMode={isPreviewMode}
             togglePreviewMode={togglePreviewMode}
             onReorderComponents={handleReorderComponents}
+            onComponentWidthChange={handleComponentWidthChange}
           />
         </div>
       </div>
