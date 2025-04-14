@@ -2,10 +2,15 @@ import React, { useState } from 'react';
 
 interface ImageComponentProps {
   id: string;
+  content?: string | null;
+  onChange?: (content: string | null) => void;
 }
 
-const ImageComponent: React.FC<ImageComponentProps> = ({ id }) => {
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
+const ImageComponent: React.FC<ImageComponentProps> = ({ 
+  id,
+  content = null,
+  onChange = () => {}
+}) => {
   const [isUploading, setIsUploading] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -15,7 +20,7 @@ const ImageComponent: React.FC<ImageComponentProps> = ({ id }) => {
       // In a real app, you would upload the file to a server
       // For this demo, we'll just create a local URL
       const url = URL.createObjectURL(file);
-      setImageUrl(url);
+      onChange(url);
       setIsUploading(false);
     }
   };
@@ -25,7 +30,7 @@ const ImageComponent: React.FC<ImageComponentProps> = ({ id }) => {
       <div className="flex justify-between items-center mb-2">
         <div className="text-sm text-gray-500">Image Component</div>
         <label className="text-blue-500 text-sm hover:text-blue-700 cursor-pointer ml-8">
-          {imageUrl ? 'Replace Image' : 'Upload Image'}
+          {content ? 'Replace Image' : 'Upload Image'}
           <input 
             type="file" 
             className="hidden" 
@@ -35,10 +40,10 @@ const ImageComponent: React.FC<ImageComponentProps> = ({ id }) => {
         </label>
       </div>
       
-      {imageUrl ? (
+      {content ? (
         <div className="flex justify-center">
           <img 
-            src={imageUrl} 
+            src={content}
             alt="Uploaded"
             className="w-full h-auto object-contain max-h-64"
           />

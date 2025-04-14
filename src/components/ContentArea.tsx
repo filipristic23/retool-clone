@@ -9,6 +9,7 @@ interface DroppedComponent {
   type: string;
   text: string;
   width?: string; // Add width property to track component width
+  content?: { text?: string; imageUrl?: string | null };
 }
 
 interface ContentAreaProps {
@@ -17,6 +18,7 @@ interface ContentAreaProps {
   togglePreviewMode?: () => void;
   onReorderComponents?: (newOrder: DroppedComponent[]) => void;
   onComponentWidthChange?: (id: string, width: string) => void;
+  onComponentContentChange?: (id: string, content: { text?: string; imageUrl?: string | null }) => void;
 }
 
 const ContentArea: React.FC<ContentAreaProps> = ({ 
@@ -24,7 +26,8 @@ const ContentArea: React.FC<ContentAreaProps> = ({
   isPreviewMode = false,
   togglePreviewMode = () => {},
   onReorderComponents = () => {},
-  onComponentWidthChange = () => {}
+  onComponentWidthChange = () => {},
+  onComponentContentChange = () => {}
 }) => {
   const { setNodeRef, isOver } = useDroppable({
     id: 'content-area',
@@ -78,6 +81,14 @@ const ContentArea: React.FC<ContentAreaProps> = ({
   // When component width changes, update the state in parent
   const handleWidthChange = (id: string, width: string) => {
     onComponentWidthChange(id, width);
+  };
+
+  const handleTextChange = (id: string, text: string) => {
+    onComponentContentChange(id, { text });
+  };
+
+  const handleImageChange = (id: string, imageUrl: string | null) => {
+    onComponentContentChange(id, { imageUrl });
   };
 
   const handleDrop = () => {
@@ -191,9 +202,17 @@ const ContentArea: React.FC<ContentAreaProps> = ({
                       onWidthChange={(width) => handleWidthChange(component.id, width)}
                     >
                       {component.type === 'text' ? (
-                        <TextComponent id={component.id} />
+                        <TextComponent 
+                          id={component.id} 
+                          content={component.content?.text}
+                          onChange={(text) => handleTextChange(component.id, text)}
+                        />
                       ) : component.type === 'image' ? (
-                        <ImageComponent id={component.id} />
+                        <ImageComponent 
+                          id={component.id}
+                          content={component.content?.imageUrl}
+                          onChange={(imageUrl) => handleImageChange(component.id, imageUrl)}
+                        />
                       ) : null}
                     </ResizableComponent>
                   </div>

@@ -8,6 +8,10 @@ interface DroppedComponent {
   type: string;
   text: string;
   width?: string;
+  content?: {
+    text?: string;
+    imageUrl?: string | null;
+  };
 }
 
 const Layout: React.FC = () => {
@@ -22,7 +26,11 @@ const Layout: React.FC = () => {
         id: `${active.data.current?.type}-${Date.now()}`,
         type: active.data.current?.type,
         text: active.data.current?.text,
-        width: '100%' // Default width for new components
+        width: '100%', // Default width for new components
+        content: {
+          text: 'Text content',
+          imageUrl: null
+        }
       };
       
       setDroppedComponents([...droppedComponents, newComponent]);
@@ -45,6 +53,16 @@ const Layout: React.FC = () => {
     setDroppedComponents(updatedComponents);
   };
 
+  const handleComponentContentChange = (id: string, content: { text?: string; imageUrl?: string | null }) => {
+    const updatedComponents = droppedComponents.map(component => 
+      component.id === id 
+        ? { ...component, content: { ...component.content, ...content } } 
+        : component
+    );
+    
+    setDroppedComponents(updatedComponents);
+  };
+
   const togglePreviewMode = () => {
     setIsPreviewMode(!isPreviewMode);
   };
@@ -60,6 +78,7 @@ const Layout: React.FC = () => {
             togglePreviewMode={togglePreviewMode}
             onReorderComponents={handleReorderComponents}
             onComponentWidthChange={handleComponentWidthChange}
+            onComponentContentChange={handleComponentContentChange}
           />
         </div>
       </div>
